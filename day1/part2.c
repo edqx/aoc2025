@@ -2,21 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-int main(int argc, char** argv) {
-  if (argc < 2) {
-    fprintf(stderr, "Usage: ./part1 <input file name>\n");
-    exit(1);
-  }
-  
-  char* file_name = argv[1];
+#include "solution.h"
 
-  FILE* file = fopen(file_name, "r");
-
-  if (file == NULL) {
-    fprintf(stderr, "Could not open file\n");
-    exit(1);
-  }
-
+int solution(FILE *file) {
   int dial = 50;
   int times_we_hit_0 = 0;
 
@@ -25,13 +13,11 @@ int main(int argc, char** argv) {
     int num;
 
     switch (fscanf(file, "%1c%3d\n", &dir, &num)) {
-      case EOF: goto leave;
+      case EOF:
+        printf("Password: %d", times_we_hit_0);
+        return AOC_EXIT;
       case 2: break;
-      default:
-        fprintf(stderr, "Improperly formatted file\n");
-        fclose(file);
-        exit(1);
-        break;
+      default: return AOC_BAD_FORMAT;
     }
 
     switch (dir) {
@@ -52,9 +38,4 @@ int main(int argc, char** argv) {
     if (dial > 99) dial -= 100;
     if (dial < 0) dial += 100;
   }
-
-leave:
-  printf("Password: %d", times_we_hit_0);
-
-  fclose(file);
 }
