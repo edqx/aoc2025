@@ -44,16 +44,15 @@ int solution(FILE *file) {
 
     char delim;
     switch (fscanf(file, "%c", &delim)) {
-      case EOF:
-        printf("Total: %lld", total);
-        return AOC_EXIT;
+      case EOF: goto total;
       case 1: break;
       default: return AOC_BAD_FORMAT;
     }
 
-    if (delim != ',') {
-      printf("Total: %lld", total);
-      return AOC_EXIT;
-    }
+    if (delim != ',') goto total;
   }
+
+total:
+  printf("Total: %lld", total);
+  return AOC_EXIT;
 }
