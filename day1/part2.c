@@ -14,7 +14,7 @@ int solution(FILE *file) {
 
     switch (fscanf(file, "%1c%3d\n", &dir, &num)) {
       case EOF:
-        printf("Password: %d", times_we_hit_0);
+        printf("Password: %d\n", times_we_hit_0);
         return AOC_EXIT;
       case 2: break;
       default: return AOC_BAD_FORMAT;

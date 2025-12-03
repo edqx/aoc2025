@@ -89,6 +89,6 @@ int solution(FILE *file) {
   }
 
 total:
-  printf("Total: %lld", total);
+  printf("Total: %lld\n", total);
   return AOC_EXIT;
 }
