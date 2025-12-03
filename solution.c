@@ -25,6 +25,11 @@ int main(int argc, char **argv) {
       fclose(file);
       exit(1);
       break;
+    case AOC_FATAL:
+      fprintf(stderr, "A fatal error occurred\n");
+      fclose(file);
+      exit(1);
+      break;
   }
 
   fclose(file);
