@@ -33,7 +33,7 @@ int count_adjacent(char *buf, int size, int offset, int line_length) {
   // line below
   if (exists(buf, size, col - 1, row + 1, line_length)) result += 1;
   if (exists(buf, size, col,     row + 1, line_length)) result += 1;
-  if (exists(buf, size, col+ 1, row + 1, line_length)) result += 1;
+  if (exists(buf, size, col + 1, row + 1, line_length)) result += 1;
 
   return result;
 }
