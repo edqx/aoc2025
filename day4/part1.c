@@ -67,7 +67,7 @@ int solution(FILE *file) {
   int file_size = ftell(file);
   fseek(file, 0, SEEK_SET);
   
-  char *buf = malloc(file_size);
+  char *buf = calloc(file_size, 1);
   fread(buf, 1, file_size, file);
   
   int result;
