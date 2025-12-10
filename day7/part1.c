@@ -1,62 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "solution.h"
 
-#define MAX_TOTALS 2048
+#define MAX_LINE 512
 
-int solution_impl(char *buf, int file_size, long long *result) {
-  char *line;
-  char *newl = buf;
+#define BEAM '|'
+#define SPACE '.'
+#define SPLIT '^'
+#define START 'S'
 
-  (*result) = 0;
-
-  // store both the * total and the + total, since we don't know the operation until the end
-  long long subtotals[MAX_TOTALS][2];
-  for (int i = 0; i < MAX_TOTALS; i++) {
-    subtotals[i][0] = 1; // mult. identity
-    subtotals[i][1] = 0; // add. identity
+void split_beam(int len, char* line, int i) {
+  if (i > 0 && line[i - 1] == SPACE) {
+    line[i - 1] = BEAM;
   }
 
-  while ((line = strtok_r(newl, "\n", &newl))) {
-    char *token;
-    char *sp = line;
-    int num = 0;
-    while ((token = strtok_r(sp, " ", &sp))) {
-      switch (token[0]) {
-      case '*':
-        (*result) += subtotals[num][0];
-        break;
-      case '+':
-        (*result) += subtotals[num][1];
-        break;
-      default:;
-        long long op = strtoll(token, 0, 0);
-        subtotals[num][0] *= op;
-        subtotals[num][1] += op;
-        break;
+  if (i < len - 1 && line[i + 1] == SPACE) {
+    line[i + 1] = BEAM;
+  }
+}
+
+void transform_line(char* above_line, char* line, int *num_splits) {
+  assert(strlen(above_line) == strlen(line));
+
+  int len = strlen(line);
+  for (int i = 0; i < len; i++) {
+    char above_op = above_line[i];
+    char op = line[i];
+
+    switch (op) {
+    case BEAM: break;
+    case SPACE:
+      if (above_op == BEAM) line[i] = BEAM;
+      break;
+    case SPLIT:
+      if (above_op == BEAM) {
+        split_beam(len, line, i);
+        (*num_splits) += 1;
       }
-      num++;
+      break;
+    case START:
+      line[i] = BEAM;
     }
   }
-  return AOC_EXIT;
 }
 
 int solution(FILE *file) {
- // windows translates \r\n to \n so it seems impossible to get the file size properly with one or two calls
-  fseek(file, 0, SEEK_END);
-  int file_size = ftell(file);
-  fseek(file, 0, SEEK_SET);
-  
-  char *buf = calloc(file_size, 1);
-  fread(buf, 1, file_size, file);
-  
-  long long result;
-  int code = solution_impl(buf, file_size, &result);
-  free(buf);
-  if (code == AOC_EXIT) {
-    printf("Total: %lld\n", result);
+  char last_line[MAX_LINE];
+  memset(last_line, SPACE, MAX_LINE);
+
+  char current_line[MAX_LINE];
+  memset(current_line, SPACE, MAX_LINE);
+
+  int num_splits = 0;
+
+  while (1) {
+    switch (fscanf(file, "%s", current_line)) {
+    case 1: break;
+    default: goto leave;
+    }
+
+    int len = strlen(current_line);
+    last_line[len] = '\0';
+
+    transform_line(last_line, current_line, &num_splits);
+
+    strcpy(last_line, current_line);
+    // printf("%s\n", current_line);
   }
-  return code;
+
+leave:
+  printf("Number of splits: %d\n", num_splits);
+  return AOC_EXIT;
 }
